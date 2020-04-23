@@ -10,4 +10,5 @@ require (
 	github.com/valyala/fasttemplate v1.1.0 // indirect
 	golang.org/x/crypto v0.0.0-20200420201142-3c4aac89819a // indirect
 	gopkg.in/gorp.v1 v1.7.2
+	gopkg.in/gorp.v2 v2.2.0
 )

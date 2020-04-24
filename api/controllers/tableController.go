@@ -25,38 +25,53 @@ type HouseHold struct {
 
 func GetTable() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		err := godotenv.Load()
-		checkErr(err, "env failed")
+		
+		dbmap := initDb()
+		defer dbmap.Db.Close()
+		
+		var management  []HouseHold
+		//SQLのクエリを直接記入（今回はselect文）
+		_, err := dbmap.Select(&management, "select * from main_list")
+		checkErr(err, "select failed")
+		fmt.Printf("%#v", management)
+		
+		return c.JSON(http.StatusOK, management)
+	}
+}
 
+func CreateItem() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		
 		dbmap := initDb()
 		defer dbmap.Db.Close()
 
-		err = dbmap.TruncateTables()
-		checkErr(err, "TruncateTables failed")
+		var beforeItem HouseHold
+		err := dbmap.SelectOne(&beforeItem,
+			"select * from main_list order by Id desc limit 1")
+		checkErr(err, "select failed")
+
+		fmt.Printf("%#v\n", beforeItem)
 
 		dateNow := time.Now()
-		log1 := &HouseHold{0, dateNow, dateNow, 0, "初期データ", 3000, 1}
-		err = dbmap.Insert(log1)
+		item := &HouseHold{beforeItem.Id + 1, dateNow, dateNow, 0, "初期データ", 4000, 1}
+		err = dbmap.Insert(item)
+		checkErr(err, "insert failed")
 
-		var management  []HouseHold
-		//SQLのクエリを直接記入（今回はselect文）
-		_, err = dbmap.Select(&management, "select * from main_list")
-		// list, _ := dbmap.Select(HouseHold{}, "select * from main_list")
-		fmt.Printf("%#v", management)
-
-		return c.JSON(http.StatusOK, management)
+		return c.String(http.StatusOK, "created item!")
 	}
 }
 
 //dbに関する設定、今後modelsに移行予定
 func initDb() *gorp.DbMap {
+	err := godotenv.Load()
+	checkErr(err, "env failed")
 	db, err := sql.Open("mysql", os.Getenv("TABLENAME"))
 	checkErr(err, "sql.Open failed")
-
+	
 	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF-8"}}
 
-	err = dbmap.CreateTablesIfNotExists()
-	checkErr(err, "Create tables failed")
+	// err = dbmap.CreateTablesIfNotExists()
+	// checkErr(err, "Create tables failed")
 	
 	table := dbmap.AddTableWithName(HouseHold{}, "main_list")
 	table.ColMap("Id").Rename("id")

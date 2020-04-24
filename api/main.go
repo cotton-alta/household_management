@@ -13,6 +13,7 @@ func main() {
 	e.Use(middleware.Recover())
 
 	e.GET("/api", controllers.GetTable())
+	e.GET("/api/items", controllers.CreateItem())
 
 	e.Start(":3001")
 }

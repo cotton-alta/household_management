@@ -1,6 +1,18 @@
 <template>
   <div class="container">
     <el-row>
+      <el-col :span="24">
+        <span>タイトルから検索</span>
+        <el-input placeholder="Please input" v-model="input"></el-input>
+      </el-col>
+      <el-col>
+      <el-collapse>
+        <el-collapse-item title="絞り込み" name="1">
+          <span>ジャンル</span>
+          <el-input placeholder="Please input" v-model="input"></el-input>
+        </el-collapse-item>
+      </el-collapse>
+      </el-col>
       <el-col :span="12">
         <el-button style="width: 100px;">
           <nuxt-link to="/create">
@@ -54,7 +66,18 @@ export default {
   margin: 30px 0px;
 }
 
+.el-button {
+  position: relative;
+  height: 40px;
+}
+
 a {
+  line-height: 40px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   text-decoration: none;
   color: #606266;
 }

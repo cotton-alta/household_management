@@ -12,7 +12,7 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	e.GET("/", controllers.GetTable())
+	e.GET("/api", controllers.GetTable())
 
 	e.Start(":3001")
 }

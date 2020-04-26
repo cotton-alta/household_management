@@ -64,14 +64,52 @@ func GetItem() echo.HandlerFunc {
 	}
 }
 
-// func UpdateItem() echo.HandlerFunc {
-// 	return func(c echo.Context) error {
-// 		dbmap := initDb()
-// 		defer dbmap.Db.Close()
+func UpdateItem() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		dbmap := initDb()
+		defer dbmap.Db.Close()
 
-// 		return c.JSON(http.StatusOK, )
-// 	}
-// }
+		var data FormData
+		err := c.Bind(&data)
+		checkErr(err, "data catch error")
+		fmt.Printf("%#v\n", data)
+		
+		pathName := c.Param("item")
+		var item HouseHold
+		err = dbmap.SelectOne(
+			&item,
+			"select * from main_list where id=? order by Id desc limit 1 ",
+			pathName,
+		)
+		checkErr(err, "select failed")
+		
+		dateNow := time.Now()
+		difference := data.Amount - item.Amount
+		updateBalance := item.Balance - difference
+		
+		fmt.Printf("%v\n", updateBalance)
+
+		updateData := &HouseHold{
+			item.Id,
+			item.Created,
+			dateNow,
+			data.Amount,
+			data.Body,
+			updateBalance,
+			data.Genre}
+		fmt.Printf("%#v\n", updateData)
+		_, err = dbmap.Update(updateData)
+		checkErr(err, "insert failed")
+
+		_, err = dbmap.Exec(
+			"update main_list set balance = balance - ? where id > ?",
+			difference,
+			pathName,
+		)
+
+		return c.JSON(http.StatusOK, "updeted item!")
+	}
+}
 
 func DeleteItem() echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -93,7 +131,7 @@ func DeleteItem() echo.HandlerFunc {
 		fmt.Printf("%#v\n", item)
 
 		_, err = dbmap.Exec(
-			"update main_list set balance = balance - ? where id > ?",
+			"update main_list set balance = balance + ? where id > ?",
 			amount,
 			pathName,
 		)
@@ -129,7 +167,7 @@ func CreateItem() echo.HandlerFunc {
 			dateNow,
 			data.Amount,
 			data.Body,
-			beforeItem.Balance + data.Amount,
+			beforeItem.Balance - data.Amount,
 			data.Genre}
 		err = dbmap.Insert(item)
 		checkErr(err, "insert failed")

@@ -30,6 +30,7 @@
 
 <script>
 import itemTable from "~/components/table.vue"
+// import moment from "moment"
 
 export default {
   components: {
@@ -52,7 +53,7 @@ export default {
 .container {
   margin: 0 auto;
   min-height: 100vh;
-  width: 80%;
+  width: 95%;
   max-width: 1000px;
 }
 

@@ -18,7 +18,6 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-button style="width: 100px;" @click="deleteData">削除</el-button>
       <el-button style="width: 100px;" @click="updateData">編集完了</el-button>
       <el-button style="width: 100px;">
         <nuxt-link to="/">戻る</nuxt-link>
@@ -42,18 +41,13 @@ export default {
   },
   methods: {
     updateData: function() {
-      axios.post(`/api/items/${this.urlParameter}`,
+      console.log("OK")
+      axios.put(`/api/items/${this.urlParameter}`,
         { title: this.data.Body, genre: Number(this.data.Genre), amount: Number(this.data.Amount) },
         { headers: { "Content-Type": "application/json" } }
       )
-    },
-    deleteData: function() {
-      console.log(this.urlParameter)
-      axios.delete(`/api/items/${this.urlParameter}`)
         .then(result => {
-          this.$router.push("/")
-        }).catch(err => {
-          console.log(err)
+          console.log(result)
         })
     }
   }

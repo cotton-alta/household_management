@@ -13,7 +13,9 @@ func main() {
 	e.Use(middleware.Recover())
 
 	e.GET("/api", controllers.GetTable())
-	e.GET("/api/items", controllers.CreateItem())
+	e.POST("/api/items", controllers.CreateItem())
+	e.GET("/api/items/:item", controllers.GetItem())
+	e.DELETE("/api/items/:item", controllers.DeleteItem())
 
 	e.Start(":3001")
 }

@@ -13,6 +13,12 @@ import (
 	"github.com/joho/godotenv"
 )
 
+type FormData struct {
+	Body   string `json:"title"` 
+	Amount int64 `json:"amount"`
+	Genre  int64 `json:"genre"`
+}
+
 type HouseHold struct {
 	Id      int64  `db:"id, primarykey"`
 	Created time.Time  `db:"created_at"`
@@ -25,7 +31,6 @@ type HouseHold struct {
 
 func GetTable() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		
 		dbmap := initDb()
 		defer dbmap.Db.Close()
 		
@@ -39,21 +44,80 @@ func GetTable() echo.HandlerFunc {
 	}
 }
 
-func CreateItem() echo.HandlerFunc {
+func GetItem() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		dbmap := initDb()
+		defer dbmap.Db.Close()
 		
+		pathName := c.Param("item")
+		// fmt.Printf("%v", pathName)
+		var item HouseHold
+		err := dbmap.SelectOne(
+			&item,
+			"select * from main_list where id=? order by Id desc limit 1 ",
+			pathName,
+		)
+		checkErr(err, "select failed")
+		// fmt.Printf("%#v", item)
+		
+		return c.JSON(http.StatusOK, item)
+	}
+}
+
+// func UpdateItem() echo.HandlerFunc {
+// 	return func(c echo.Context) error {
+// 		dbmap := initDb()
+// 		defer dbmap.Db.Close()
+
+// 		return c.JSON(http.StatusOK, )
+// 	}
+// }
+
+func DeleteItem() echo.HandlerFunc {
+	return func(c echo.Context) error {
 		dbmap := initDb()
 		defer dbmap.Db.Close()
 
+		pathName := c.Param("item")
+		fmt.Printf("%v\n", pathName)
+		var item HouseHold
+		err := dbmap.SelectOne(
+			&item,
+			"select * from main_list where id=? order by Id desc limit 1 ",
+			pathName,
+		)
+		checkErr(err, "select failed")
+		dbmap.Delete(&item)
+		return c.String(http.StatusOK, "item deleted")
+	}
+}
+
+func CreateItem() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		dbmap := initDb()
+		defer dbmap.Db.Close()
+		
+		var data FormData
+		err := c.Bind(&data)
+		checkErr(err, "data catch error")
+		fmt.Printf("%#v", data)
+
 		var beforeItem HouseHold
-		err := dbmap.SelectOne(&beforeItem,
+		err = dbmap.SelectOne(&beforeItem,
 			"select * from main_list order by Id desc limit 1")
 		checkErr(err, "select failed")
 
 		fmt.Printf("%#v\n", beforeItem)
 
 		dateNow := time.Now()
-		item := &HouseHold{beforeItem.Id + 1, dateNow, dateNow, 0, "初期データ", 4000, 1}
+		item := &HouseHold{
+			beforeItem.Id + 1,
+			dateNow,
+			dateNow,
+			data.Amount,
+			data.Body,
+			beforeItem.Balance + data.Amount,
+			data.Genre}
 		err = dbmap.Insert(item)
 		checkErr(err, "insert failed")
 

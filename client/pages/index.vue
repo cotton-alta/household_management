@@ -37,6 +37,7 @@ export default {
   },
   async asyncData({ app }) {
     let data = await app.$axios.$get("/api")
+    data = data.reverse()
     return { data }
   },
   data() {

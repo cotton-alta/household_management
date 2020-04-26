@@ -86,8 +86,21 @@ func DeleteItem() echo.HandlerFunc {
 			"select * from main_list where id=? order by Id desc limit 1 ",
 			pathName,
 		)
-		checkErr(err, "select failed")
+
+		amount := item.Amount
 		dbmap.Delete(&item)
+		
+		fmt.Printf("%#v\n", item)
+
+		_, err = dbmap.Exec(
+			"update main_list set balance = balance - ? where id > ?",
+			amount,
+			pathName,
+		)
+
+		_, err = dbmap.Exec("update main_list set id = id - 1 where id > ?", pathName)
+		// (select id from main_list where id = ?)
+		checkErr(err, "select failed")
 		return c.String(http.StatusOK, "item deleted")
 	}
 }

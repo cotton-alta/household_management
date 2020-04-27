@@ -19,14 +19,26 @@ type FormData struct {
 	Genre  int64 `json:"genre"`
 }
 
+
 type HouseHold struct {
-	Id      int64  `db:"id, primarykey"`
+	Id      int64      `db:"id, primarykey"`
 	Created time.Time  `db:"created_at"`
 	Updated time.Time  `db:"updated_at"`
-	Amount  int64  `db:"amount_money"`
-	Body    string `db:"remark,size:1024"`
-	Balance int64  `db:"balance"` 
-	Genre int64  `db:"genre"` 
+	Amount  int64      `db:"amount_money"`
+	Body    string     `db:"remark,size:1024"`
+	Balance int64      `db:"balance"` 
+	Genre   int64      `db:"genre"`  
+}
+
+type JoinTable struct {
+	Id      int64      `db:"id, primarykey"`
+	Created time.Time  `db:"created_at"`
+	Updated time.Time  `db:"updated_at"`
+	Amount  int64      `db:"amount_money"`
+	Body    string     `db:"remark,size:1024"`
+	Balance int64      `db:"balance"` 
+	Genre   string      `db:"genre"` 
+	GenreId int64      `db:"genre_id"` 
 }
 
 func GetTable() echo.HandlerFunc {
@@ -34,9 +46,11 @@ func GetTable() echo.HandlerFunc {
 		dbmap := initDb()
 		defer dbmap.Db.Close()
 		
-		var management  []HouseHold
+		var management  []JoinTable
 		//SQLのクエリを直接記入（今回はselect文）
-		_, err := dbmap.Select(&management, "select * from main_list")
+		_, err := dbmap.Select(
+			&management,
+			"select * from main_list join genre_list on main_list.Genre = genre_list.genre_id order by Id desc")
 		checkErr(err, "select failed")
 		fmt.Printf("%#v", management)
 		

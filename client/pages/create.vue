@@ -14,8 +14,12 @@
       <el-col :span="24">
         <span>ジャンル</span>
         <el-select style="width: 100%;" v-model="genre" placeholder="please select your zone">
-          <el-option label="ジャンル1" value="1"></el-option>
-          <el-option label="ジャンル2" value="2"></el-option>
+          <el-option label="食費" value="0"></el-option>
+          <el-option label="光熱費" value="1"></el-option>
+          <el-option label="教育費" value="2"></el-option>
+          <el-option label="移動費" value="3"></el-option>
+          <el-option label="娯楽費" value="4"></el-option>
+          <el-option label="その他" value="5"></el-option>
         </el-select>
       </el-col>
     </el-row>

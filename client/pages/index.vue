@@ -27,7 +27,7 @@
 
 <script>
 import itemTable from "~/components/table.vue"
-// import moment from "moment"
+import moment from "moment"
 
 export default {
   components: {
@@ -35,7 +35,6 @@ export default {
   },
   async asyncData({ app }) {
     let data = await app.$axios.$get("/api")
-    data = data.reverse()
     data.map(item => {
       if(item.Amount != 0) {
         item.Amount = -item.Amount
@@ -43,6 +42,8 @@ export default {
           item.Amount = "+" + item.Amount
         }
       }
+      item.Created = moment(item.Created).format('L')
+      item.Updated = moment(item.Updated).format('L')
     })
     return { data }
   },

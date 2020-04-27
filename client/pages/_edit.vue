@@ -14,8 +14,12 @@
       <el-col :span="24">
         <span>ジャンル</span>
         <el-select style="width: 100%;" v-model="data.Genre" placeholder="please select your zone">
-          <el-option label="ジャンル1" value="1"></el-option>
-          <el-option label="ジャンル2" value="2"></el-option>
+          <el-option label="食費" value="0"></el-option>
+          <el-option label="光熱費" value="1"></el-option>
+          <el-option label="教育費" value="2"></el-option>
+          <el-option label="移動費" value="3"></el-option>
+          <el-option label="娯楽費" value="4"></el-option>
+          <el-option label="その他" value="5"></el-option>
         </el-select>
       </el-col>
     </el-row>
@@ -36,7 +40,8 @@ export default {
   async asyncData({ app, route }) {
     let urlParameter = encodeURIComponent(route.params.edit),
         data = await app.$axios.$get(`/api/items/${urlParameter}`),
-        radio = "1"
+        radio = "1",
+        genrePlaceholder = ""
     if(data.Amount < 0) {
       radio = "2"
       data.Amount = -data.Amount
@@ -44,7 +49,8 @@ export default {
     } else {
       console.log("出金")
     }
-    return { data, radio }
+    data.Genre = String(data.Genre)
+    return { data, radio, genrePlaceholder }
   },
   data() {
     return { 
@@ -56,6 +62,7 @@ export default {
       if(this.radio === "2") {
         this.data.Amount = Number(-this.data.Amount)
         console.log("this.data.Amount", this.data.Amount)
+        console.log("this.data.Genre", this.data.Genre)
       }
       axios.put(`/api/items/${this.urlParameter}`,
         { title: this.data.Body, genre: Number(this.data.Genre), amount: Number(this.data.Amount) },

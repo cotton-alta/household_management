@@ -8,7 +8,7 @@
       <el-table-column prop="Id" label="ID"></el-table-column>
       <el-table-column prop="Created" label="記入日"></el-table-column>
       <el-table-column prop="Updated" label="更新日"></el-table-column>
-      <el-table-column prop="Amount" label="使用金額"></el-table-column>
+      <el-table-column prop="Amount" label="入出金"></el-table-column>
       <el-table-column prop="Balance" label="残高"></el-table-column>
       <el-table-column prop="Genre" label="ジャンル"></el-table-column>
       <el-table-column

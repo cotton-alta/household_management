@@ -13,15 +13,12 @@
         </el-collapse-item>
       </el-collapse>
       </el-col>
-      <el-col :span="12">
-        <el-button style="width: 100px;">
+      <el-col :span="24">
+        <el-button style="width: 200px;">
           <nuxt-link to="/create">
           新規作成
           </nuxt-link>
         </el-button>
-      </el-col>
-      <el-col :span="12">
-        <el-button style="width: 100px;">編集</el-button>
       </el-col>
       <itemTable :tableData="data"/>
     </el-row>
@@ -39,6 +36,14 @@ export default {
   async asyncData({ app }) {
     let data = await app.$axios.$get("/api")
     data = data.reverse()
+    data.map(item => {
+      if(item.Amount != 0) {
+        item.Amount = -item.Amount
+        if(item.Amount > 0) {
+          item.Amount = "+" + item.Amount
+        }
+      }
+    })
     return { data }
   },
   data() {

@@ -7,6 +7,8 @@
       </el-col>
       <el-col :span="24">
         <span>金額</span>
+        <el-radio v-model="radio" label="1">出金</el-radio>
+        <el-radio v-model="radio" label="2"> 入金</el-radio>
         <el-input placeholder="Please input" v-model="amount" ></el-input>
       </el-col>
       <el-col :span="24">
@@ -35,11 +37,15 @@ export default {
       title: "",
       genre: "",
       amount: "",
-
+      radio: "1"
     }
   },
   methods: {
     postData: function() {
+      if(this.radio === "2") {
+        this.amount = Number(-this.amount)
+        console.log(this.amount)
+      }
       axios.post("/api/items",
         { title: this.title, genre: Number(this.genre), amount: Number(this.amount) },
         { headers: { "Content-Type": "application/json" } }
@@ -61,5 +67,15 @@ export default {
 .el-col {
   width: 100%;
   text-align: left;
+}
+
+.el-radio {
+  margin: 10px 10px;
+}
+
+span {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
 }
 </style>

@@ -16,6 +16,7 @@ func main() {
 	e.POST("/api/items", controllers.CreateItem())
 	e.GET("/api/items/:item", controllers.GetItem())
 	e.DELETE("/api/items/:item", controllers.DeleteItem())
+	e.PUT("/api/items/:item", controllers.UpdateItem())
 
 	e.Start(":3001")
 }

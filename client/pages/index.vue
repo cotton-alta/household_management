@@ -13,15 +13,12 @@
         </el-collapse-item>
       </el-collapse>
       </el-col>
-      <el-col :span="12">
-        <el-button style="width: 100px;">
+      <el-col :span="24">
+        <el-button style="width: 200px;">
           <nuxt-link to="/create">
           新規作成
           </nuxt-link>
         </el-button>
-      </el-col>
-      <el-col :span="12">
-        <el-button style="width: 100px;">編集</el-button>
       </el-col>
       <itemTable :tableData="data"/>
     </el-row>
@@ -30,6 +27,7 @@
 
 <script>
 import itemTable from "~/components/table.vue"
+import moment from "moment"
 
 export default {
   components: {
@@ -37,7 +35,16 @@ export default {
   },
   async asyncData({ app }) {
     let data = await app.$axios.$get("/api")
-    data = data.reverse()
+    data.map(item => {
+      if(item.Amount != 0) {
+        item.Amount = -item.Amount
+        if(item.Amount > 0) {
+          item.Amount = "+" + item.Amount
+        }
+      }
+      item.Created = moment(item.Created).format('L')
+      item.Updated = moment(item.Updated).format('L')
+    })
     return { data }
   },
   data() {
@@ -52,7 +59,7 @@ export default {
 .container {
   margin: 0 auto;
   min-height: 100vh;
-  width: 80%;
+  width: 95%;
   max-width: 1000px;
 }
 

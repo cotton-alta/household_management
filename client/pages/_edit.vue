@@ -68,8 +68,8 @@ export default {
         { title: this.data.Body, genre: Number(this.data.Genre), amount: Number(this.data.Amount) },
         { headers: { "Content-Type": "application/json" } }
       )
-        .then(result => {
-          console.log(result)
+        .then(() => {
+          this.$router.push("/")
         })
     }
   }

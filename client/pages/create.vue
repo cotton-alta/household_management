@@ -54,6 +54,9 @@ export default {
         { title: this.title, genre: Number(this.genre), amount: Number(this.amount) },
         { headers: { "Content-Type": "application/json" } }
       )
+      .then(() => {
+        this.$router.push("/")
+      })
     }
   }
 }
